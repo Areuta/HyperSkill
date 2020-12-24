@@ -1,9 +1,9 @@
 package life;//Author Anton   20.12.2020
 
 public class Spot {
-    private int x;
-    private int y;
-    private boolean live;
+    private final int x;
+    private final int y;
+    private final boolean live;
 
     public Spot(int x, int y, boolean live) {
         this.x = x;
@@ -15,23 +15,12 @@ public class Spot {
         return x;
     }
 
-    public void setX(int x) {
-        this.x = x;
-    }
-
     public int getY() {
         return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
     }
 
     public boolean isLive() {
         return live;
     }
 
-    public void setLive(boolean live) {
-        this.live = live;
-    }
 }

@@ -1,26 +1,30 @@
 package life;//Author Anton   21.12.2020
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class NextLives {
     LinkedList<GameOfLife> nextGenerations;
-    private int dim;
+    private final int dim;
 
-    public NextLives(GameOfLife gameOfLife, int countGen) {
+    public NextLives(GameOfLife gameOfLife) {
         this.dim = gameOfLife.getDimOfWorld();
         nextGenerations = new LinkedList<>();
         nextGenerations.add(gameOfLife);
     }
 
-    public GameOfLife produce(GameOfLife initialLife, int countGen) {
+    public void produce(GameOfLife initialLife, int countGen) {
         GameOfLife currentLife = initialLife;
+
         for (int i = 0; i < countGen; i++) {
+            System.out.println(currentLife);
+            clearConsole();
             currentLife = nextLife(currentLife);
             nextGenerations.add(currentLife);
+
         }
-        return currentLife;
     }
 
     public GameOfLife nextLife(GameOfLife initialLife) {
@@ -38,8 +42,7 @@ public class NextLives {
             }
         }
 
-        GameOfLife nextLife = new GameOfLife(newField);
-        return nextLife;
+        return new GameOfLife(newField);
     }
 
     private byte getNeighborsCount(List<Spot> neighbors) {
@@ -65,5 +68,18 @@ public class NextLives {
         return list;
     }
 
+    public static void clearConsole() {
+        try {
+            Thread.sleep(100);
+            if (System.getProperty("os.name").contains("Windows")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+
+            } else {
+                Runtime.getRuntime().exec("clear");
+            }
+        } catch (InterruptedException | IOException e) {
+            System.out.println("Something wrong!");
+        }
+    }
 
 }
