@@ -1,33 +1,13 @@
 package life;//Author Anton   21.12.2020
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
+
 public class NextLives {
-    LinkedList<GameOfLife> nextGenerations;
-    private final int dim;
+    private static int dim = GameOfLife.getDimOfWorld();
 
-    public NextLives(GameOfLife gameOfLife) {
-        this.dim = gameOfLife.getDimOfWorld();
-        nextGenerations = new LinkedList<>();
-        nextGenerations.add(gameOfLife);
-    }
-
-    public void produce(GameOfLife initialLife, int countGen) {
-        GameOfLife currentLife = initialLife;
-
-        for (int i = 0; i < countGen; i++) {
-            System.out.println(currentLife);
-            clearConsole();
-            currentLife = nextLife(currentLife);
-            nextGenerations.add(currentLife);
-
-        }
-    }
-
-    public GameOfLife nextLife(GameOfLife initialLife) {
+    public static Generation nextLife(Generation initialLife) {
         Spot[][] newField = new Spot[dim][dim];
         for (int j = 0; j < dim; j++) {
             for (int k = 0; k < dim; k++) {
@@ -42,10 +22,10 @@ public class NextLives {
             }
         }
 
-        return new GameOfLife(newField);
+        return new Generation(newField);
     }
 
-    private byte getNeighborsCount(List<Spot> neighbors) {
+    private static byte getNeighborsCount(List<Spot> neighbors) {
         byte sum = 0;
         for (Spot spot : neighbors) {
             sum += spot.isLive() ? 1 : 0;
@@ -53,33 +33,20 @@ public class NextLives {
         return sum;
     }
 
-    private List<Spot> getNeighbors(Spot spot, GameOfLife gameOfLife) {
+    private static List<Spot> getNeighbors(Spot spot, Generation generation) {
         int x = spot.getX();
         int y = spot.getY();
         List<Spot> list = new ArrayList<>(8);
-        list.add(gameOfLife.getField()[x][(y + 1) % dim]);
-        list.add(gameOfLife.getField()[x][(y + dim - 1) % dim]);
-        list.add(gameOfLife.getField()[(x + 1) % dim][(y + dim - 1) % dim]);
-        list.add(gameOfLife.getField()[(x + 1) % dim][y]);
-        list.add(gameOfLife.getField()[(x + 1) % dim][(y + 1) % dim]);
-        list.add(gameOfLife.getField()[(x + dim - 1) % dim][(y + dim - 1) % dim]);
-        list.add(gameOfLife.getField()[(x + dim - 1) % dim][y]);
-        list.add(gameOfLife.getField()[(x + dim - 1) % dim][(y + 1) % dim]);
+        list.add(generation.getField()[x][(y + 1) % dim]);
+        list.add(generation.getField()[x][(y + dim - 1) % dim]);
+        list.add(generation.getField()[(x + 1) % dim][(y + dim - 1) % dim]);
+        list.add(generation.getField()[(x + 1) % dim][y]);
+        list.add(generation.getField()[(x + 1) % dim][(y + 1) % dim]);
+        list.add(generation.getField()[(x + dim - 1) % dim][(y + dim - 1) % dim]);
+        list.add(generation.getField()[(x + dim - 1) % dim][y]);
+        list.add(generation.getField()[(x + dim - 1) % dim][(y + 1) % dim]);
         return list;
     }
 
-    public static void clearConsole() {
-        try {
-            Thread.sleep(100);
-            if (System.getProperty("os.name").contains("Windows")) {
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-
-            } else {
-                Runtime.getRuntime().exec("clear");
-            }
-        } catch (InterruptedException | IOException e) {
-            System.out.println("Something wrong!");
-        }
-    }
 
 }
