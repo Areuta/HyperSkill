@@ -3,7 +3,6 @@ package life;//Author Anton   21.12.2020
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class NextLives {
     private static int dim = GameOfLife.getDimOfWorld();
 

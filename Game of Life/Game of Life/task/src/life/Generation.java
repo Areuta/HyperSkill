@@ -4,11 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
 
+import static life.GameOfLife.aliveColor;
+
 public class Generation {
     private final Spot[][] field;
     private static int dim = GameOfLife.getDimOfWorld();
     private final long alive;
-    static int numberGenerations = 1;
     static JPanel[][] panels = new JPanel[dim][dim];
 
     private long aliveCreate() {
@@ -35,8 +36,10 @@ public class Generation {
         for (int i = 0; i < dim; i++) {
             for (int j = 0; j < dim; j++) {
                 spots[i][j] = new Spot(i, j, random.nextBoolean());
-                panels[i][j] = new JPanel();
-                GameOfLife.getGridsPanel().add(panels[i][j]);
+                if (panels[i][j] == null) {
+                    panels[i][j] = new JPanel();
+                    GameOfLife.getGridsPanel().add(panels[i][j]);
+                }
 
             }
         }
@@ -48,7 +51,6 @@ public class Generation {
         this.dim = field.length;
         this.field = field;
         this.alive = aliveCreate();
-        numberGenerations++;
     }
 
     public void paintGeneration() {
@@ -57,7 +59,7 @@ public class Generation {
 
         for (int i = 0; i < dim; i++) {
             for (int j = 0; j < dim; j++) {
-                Color color = field[i][j].isLive() ? Color.black : Color.white;
+                Color color = field[i][j].isLive() ? aliveColor : Color.white;
                 panels[i][j].setBackground(color);
             }
         }

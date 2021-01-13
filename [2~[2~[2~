@@ -1,0 +1,268 @@
+warning: LF will be replaced by CRLF in Game of Life/Game of Life/Gamify it/task.html.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in Game of Life/Game of Life/Generations/task.html.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in Game of Life/Game of Life/Let there be light/task.html.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in Game of Life/Game of Life/Life goes by/task.html.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in Game of Life/Game of Life/Looking good_/task.html.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in Game of Life/Game of Life/task/test/GameOfLifeTest.java.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in Game of Life/Game of Life/task/test/common/CheckResultUtil.kt.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in Game of Life/Game of Life/task/test/common/ClueWithChecker.kt.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in Game of Life/Game of Life/task/test/common/GameOfLifeCommonTest.kt.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in Game of Life/Game of Life/task/test/common/GameOfLifeStage4Test.kt.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in Game of Life/Game of Life/task/test/common/GameOfLifeStage5Test.kt.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in Game of Life/Game of Life/task/test/common/UiTestsGenerators.kt.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in Game of Life/Problems/Ternary predicate/task.html.
+The file will have its original line endings in your working directory
+[1mdiff --git a/Game of Life/Game of Life/task/src/life/GameOfLife.java b/Game of Life/Game of Life/task/src/life/GameOfLife.java[m
+[1mindex 16385a3..4e1772a 100644[m
+[1m--- a/Game of Life/Game of Life/task/src/life/GameOfLife.java[m	
+[1m+++ b/Game of Life/Game of Life/task/src/life/GameOfLife.java[m	
+[36m@@ -2,10 +2,12 @@[m [mpackage life;[m
+ [m
+ import javax.swing.*;[m
+ import java.awt.*;[m
+[32m+[m[32mimport java.util.Dictionary;[m
+[32m+[m[32mimport java.util.Hashtable;[m
+ [m
+ public class GameOfLife extends JFrame {[m
+     private static int seed = 102;[m
+[31m-    private static int UPDATE_INTERVAL = 500; // milliseconds[m
+[32m+[m[32m    private static int UPDATE_INTERVAL = 1000; // milliseconds[m
+     private static int dimOfWorld = 20;[m
+     private static int countGen = 0;[m
+     private static JLabel label1;[m
+[36m@@ -14,8 +16,13 @@[m [mpublic class GameOfLife extends JFrame {[m
+     static final String label2Text = "Alive: ";[m
+     private static JPanel labelsPanel;[m
+     private static JPanel gridsPanel;[m
+[32m+[m[32m    private static JToggleButton playBtn;[m
+[32m+[m[32m    private static JButton resetBtn;[m
+[32m+[m[32m    private static JSlider speedSlider;[m
+[32m+[m[32m    private static JButton changeColor;[m
+     private Generation currentGeneration;[m
+[31m-    private Generation initialGeneration;[m
+[32m+[m[32m    private static boolean doLife = false;[m
+[32m+[m[32m    static Color aliveColor = Color.black;[m
+ [m
+     public static int getDimOfWorld() {[m
+         return dimOfWorld;[m
+[36m@@ -41,18 +48,18 @@[m [mpublic class GameOfLife extends JFrame {[m
+         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);[m
+         componentsInit();[m
+         pack();[m
+[31m-        setSize(600, 600);[m
+[32m+[m[32m        setSize(800, 600);[m
+         setLocationRelativeTo(null);[m
+         setVisible(true);[m
+[31m-        dimOfWorld = 20;[m
+[31m-        initialGeneration = new Generation(seed);[m
+[31m-        currentGeneration = initialGeneration;[m
+[32m+[m[32m        currentGeneration = new Generation(seed);[m
+[32m+[m[32m    }[m
+ [m
+[32m+[m[32m    private void update() {[m
+         // Create a new thread to run update at regular interval[m
+         Thread updateThread = new Thread() {[m
+             @Override[m
+             public void run() {[m
+[31m-                while (true) {[m
+[32m+[m[32m                while (doLife) {[m
+                     currentGeneration = NextLives.nextLife(currentGeneration);[m
+                     countGen++;[m
+                     currentGeneration.paintGeneration();[m
+[36m@@ -66,38 +73,105 @@[m [mpublic class GameOfLife extends JFrame {[m
+             }[m
+         };[m
+         updateThread.start(); // called back run()[m
+[31m-[m
+     }[m
+ [m
+     private void componentsInit() {[m
+[31m-        Font font = new Font("Courier", Font.PLAIN, 12);[m
+[32m+[m[32m        speedSlider = new JSlider(0, 2000);[m
+[32m+[m[32m        speedSlider.setToolTipText("Speed");[m
+[32m+[m[32m        Dictionary<Integer, JLabel> labelTable = new Hashtable<>();[m
+[32m+[m[32m        labelTable.put(0, new JLabel("Fast"));[m
+[32m+[m[32m        labelTable.put(2000, new JLabel("Slow"));[m
+[32m+[m[32m        speedSlider.setLabelTable((Dictionary) labelTable);[m
+[32m+[m[32m        speedSlider.setPaintLabels(true);[m
+[32m+[m
+[32m+[m[32m        playBtn = new JToggleButton("Play", false);[m
+[32m+[m[32m//        playBtn = new JToggleButton("▶/❚❚");[m
+[32m+[m[32m        playBtn.setName("PlayToggleButton");[m
+[32m+[m
+[32m+[m[32m        resetBtn = new JButton("Reset");[m
+[32m+[m[32m        resetBtn.setName("ResetButton");[m
+[32m+[m
+         label1 = new JLabel();[m
+         label1.setName("AliveLabel");[m
+[31m-        label1.setFont(font);[m
+[31m-        label1.setFont(label1.getFont().deriveFont(16f));[m
+         label1.setText(label1Text);[m
+ [m
+         label2 = new JLabel();[m
+         label2.setName("GenerationLabel");[m
+[31m-        label2.setFont(new Font("Courier", Font.PLAIN, 16));[m
+         label2.setText(label2Text);[m
+ [m
+[32m+[m[32m        JLabel labelSpeed = new JLabel("Speed");[m
+[32m+[m
+[32m+[m[32m        changeColor = new JButton("Change Color");[m
+[32m+[m
+         labelsPanel = new JPanel();[m
+[32m+[m[32m        labelsPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));[m
+         labelsPanel.setLayout(new BoxLayout(labelsPanel, BoxLayout.Y_AXIS));[m
+[31m-        labelsPanel.add(label1);[m
+[31m-        labelsPanel.add(label2);[m
+[31m-        add(labelsPanel);[m
+[32m+[m[32m        addComponent(playBtn);[m
+[32m+[m[32m        addComponent(resetBtn);[m
+[32m+[m[32m        addComponent(changeColor);[m
+[32m+[m[32m        addComponent(label1);[m
+[32m+[m[32m        addComponent(label2);[m
+[32m+[m[32m        addComponent(labelSpeed);[m
+[32m+[m[32m        addComponent(speedSlider);[m
+ [m
+[32m+[m[32m        add(labelsPanel);[m
+         gridsPanel = new JPanel();[m
+         gridsPanel.setLayout(new GridLayout(dimOfWorld, dimOfWorld, 1, 1));[m
+         gridsPanel.setBackground(Color.lightGray);[m
+         add(gridsPanel);[m
+ [m
+         Container container = getContentPane();[m
+[31m-        container.setLayout(new BorderLayout());[m
+[31m-        container.add(labelsPanel, BorderLayout.NORTH);[m
+[32m+[m[32m        container.setLayout(new BorderLayout(10, 0));[m
+[32m+[m[32m        container.add(labelsPanel, BorderLayout.WEST);[m
+         container.add(gridsPanel, BorderLayout.CENTER);[m
+ [m
+[32m+[m[32m        addActionListeners();[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    private void addComponent(JComponent component) {[m
+[32m+[m[32m        Font font = new Font("Courier", Font.PLAIN, 16);[m
+[32m+[m[32m        component.setAlignmentX(Component.CENTER_ALIGNMENT);[m
+[32m+[m[32m        component.setFont(font);[m
+[32m+[m[32m        labelsPanel.add(component);[m
+[32m+[m[32m        labelsPanel.add(Box.createVerticalStrut(10));[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    private void addActionListeners() {[m
+[32m+[m[32m        playBtn.addActionListener(actionEvent -> {[m
+[32m+[m[32m                    if (playBtn.isSelected()) {[m
+[32m+[m[32m                        playBtn.setText("Stop");[m
+[32m+[m[32m                        doLife = true;[m
+[32m+[m[32m                        update();[m
+[32m+[m[32m                    } else {[m
+[32m+[m[32m                        playBtn.setText("Play");[m
+[32m+[m[32m                        doLife = false;[m
+[32m+[m[32m                    }[m
+[32m+[m[32m                }[m
+[32m+[m[32m        );[m
+[32m+[m[32m        resetBtn.addActionListener(actionEvent -> {[m
+[32m+[m[32m            countGen = 0;[m
+[32m+[m[32m            doLife = false;[m
+[32m+[m[32m            try {[m
+[32m+[m[32m                Thread.sleep(UPDATE_INTERVAL);[m
+[32m+[m[32m            } catch (InterruptedException e) {[m
+[32m+[m[32m                e.printStackTrace();[m
+[32m+[m[32m            }[m
+[32m+[m[32m            currentGeneration = new Generation(++seed);[m
+[32m+[m[32m            playBtn.setSelected(true);[m
+[32m+[m[32m            playBtn.setText("Stop");[m
+[32m+[m[32m            doLife = true;[m
+[32m+[m[32m            update();[m
+[32m+[m
+[32m+[m[32m        });[m
+[32m+[m
+[32m+[m[32m        speedSlider.addChangeListener(changeEvent -> {[m
+[32m+[m[32m            UPDATE_INTERVAL = ((JSlider) changeEvent.getSource()).getValue();[m
+[32m+[m[32m        });[m
+[32m+[m
+[32m+[m[32m        changeColor.addActionListener(actionEvent -> {[m
+[32m+[m[32m            aliveColor = JColorChooser.showDialog(null, "ColorChooser", Color.BLACK);[m
+[32m+[m[32m        });[m
+[32m+[m
+     }[m
+ [m
+     public static void main(String[] args) {[m
+[36m@@ -107,8 +181,6 @@[m [mpublic class GameOfLife extends JFrame {[m
+                 new GameOfLife();[m
+             }[m
+         });[m
+[31m-[m
+     }[m
+ [m
+[31m-[m
+ }[m
+[1mdiff --git a/Game of Life/Game of Life/task/src/life/Generation.java b/Game of Life/Game of Life/task/src/life/Generation.java[m
+[1mindex 692e6f8..9eb59a7 100644[m
+[1m--- a/Game of Life/Game of Life/task/src/life/Generation.java[m	
+[1m+++ b/Game of Life/Game of Life/task/src/life/Generation.java[m	
+[36m@@ -4,11 +4,12 @@[m [mimport javax.swing.*;[m
+ import java.awt.*;[m
+ import java.util.Random;[m
+ [m
+[32m+[m[32mimport static life.GameOfLife.aliveColor;[m
+[32m+[m
+ public class Generation {[m
+     private final Spot[][] field;[m
+     private static int dim = GameOfLife.getDimOfWorld();[m
+     private final long alive;[m
+[31m-    static int numberGenerations = 1;[m
+     static JPanel[][] panels = new JPanel[dim][dim];[m
+ [m
+     private long aliveCreate() {[m
+[36m@@ -35,8 +36,10 @@[m [mpublic class Generation {[m
+         for (int i = 0; i < dim; i++) {[m
+             for (int j = 0; j < dim; j++) {[m
+                 spots[i][j] = new Spot(i, j, random.nextBoolean());[m
+[31m-                panels[i][j] = new JPanel();[m
+[31m-                GameOfLife.getGridsPanel().add(panels[i][j]);[m
+[32m+[m[32m                if (panels[i][j] == null) {[m
+[32m+[m[32m                    panels[i][j] = new JPanel();[m
+[32m+[m[32m                    GameOfLife.getGridsPanel().add(panels[i][j]);[m
+[32m+[m[32m                }[m
+ [m
+             }[m
+         }[m
+[36m@@ -48,7 +51,6 @@[m [mpublic class Generation {[m
+         this.dim = field.length;[m
+         this.field = field;[m
+         this.alive = aliveCreate();[m
+[31m-        numberGenerations++;[m
+     }[m
+ [m
+     public void paintGeneration() {[m
+[36m@@ -57,7 +59,7 @@[m [mpublic class Generation {[m
+ [m
+         for (int i = 0; i < dim; i++) {[m
+             for (int j = 0; j < dim; j++) {[m
+[31m-                Color color = field[i][j].isLive() ? Color.black : Color.white;[m
+[32m+[m[32m                Color color = field[i][j].isLive() ? aliveColor : Color.white;[m
+                 panels[i][j].setBackground(color);[m
+             }[m
+         }[m
+[1mdiff --git a/Game of Life/Game of Life/task/src/life/NextLives.java b/Game of Life/Game of Life/task/src/life/NextLives.java[m
+[1mindex 95a8045..314cb4b 100644[m
+[1m--- a/Game of Life/Game of Life/task/src/life/NextLives.java[m	
+[1m+++ b/Game of Life/Game of Life/task/src/life/NextLives.java[m	
+[36m@@ -3,7 +3,6 @@[m [mpackage life;//Author Anton   21.12.2020[m
+ import java.util.ArrayList;[m
+ import java.util.List;[m
+ [m
+[31m-[m
+ public class NextLives {[m
+     private static int dim = GameOfLife.getDimOfWorld();[m
+ [m
