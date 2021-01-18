@@ -1,33 +1,46 @@
 package encryptdecrypt;
 
-import java.util.Scanner;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
-    private static final Scanner scanner = new Scanner(System.in);
-    private static int key;
+    private static int key = 0;
+    private static boolean crypt = true;
+    private static String text = "";
+    private static Map<String, String> params = new HashMap<>();
 
     public static void main(String[] args) {
-        String inputString = scanner.nextLine();
-        key = scanner.nextInt();
-        System.out.println(encryptPhrase(inputString));
-
-        scanner.close();
-    }
-
-    private static String encryptPhrase(String inputString) {
-        StringBuilder phrase = new StringBuilder();
-        String delimiterString = " ";
-        String[] words = inputString.split(delimiterString);
-
-        for (int i = 0; i < words.length; i++) {
-            delimiterString = (i == words.length - 1 ? "" : " ");
-            phrase.append(encryptWord(words[i]));
-            phrase.append(delimiterString);
+        for (int i = 0; i < args.length - 1; i++) {
+            params.put(args[i], args[i + 1]);
         }
-        return phrase.toString();
+
+        for (Map.Entry<String, String> pair : params.entrySet()) {
+            switch (pair.getKey()) {
+                case "-mode": {
+                    crypt = pair.getValue().equals("enc") ? true : false;
+                    break;
+                }
+                case "-key": {
+                    key = Integer.parseInt(pair.getValue());
+                    break;
+                }
+                case "-data": {
+                    text = pair.getValue();
+                    break;
+                }
+            }
+        }
+
+        if (!crypt) {
+            key = -key;
+        }
+
+        System.out.println(encryptText(text));
+
     }
 
-    private static String encryptWord(String wd) {
+
+    private static String encryptText(String wd) {
         char[] chars = wd.toCharArray();
 
         StringBuilder stringBuilder = new StringBuilder();
@@ -39,7 +52,6 @@ public class Main {
     }
 
     private static char encryptChar(char aChar) {
-        if (!Character.isLetter(aChar)) return aChar;
-        return (char) (97 + (aChar + key - 97) % 26);
+        return (char) (32 + Math.abs((aChar + key - 32)) % 95);
     }
 }
