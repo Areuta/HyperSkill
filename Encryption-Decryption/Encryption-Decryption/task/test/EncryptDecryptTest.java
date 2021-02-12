@@ -1,4 +1,4 @@
-import encryptdecrypt.Main;
+import encryptdecrypt.Cipher;
 import org.hyperskill.hstest.common.FileUtils;
 import org.hyperskill.hstest.stage.StageTest;
 import org.hyperskill.hstest.testcase.CheckResult;
@@ -14,7 +14,7 @@ import java.util.List;
 
 public class EncryptDecryptTest extends StageTest<String> {
     public EncryptDecryptTest() {
-        super(Main.class);
+        super(Cipher.class);
     }
 
     @Override
