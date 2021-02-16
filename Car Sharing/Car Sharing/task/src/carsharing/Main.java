@@ -1,69 +1,17 @@
 package carsharing;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.sql.Statement;
+import carsharing.dao.H2CompanyDao;
+import carsharing.ui.DatabaseMenu;
 
 public class Main {
-    // JDBC driver name and database URL
-    static final String JDBC_DRIVER = "org.h2.Driver";
-    private static final String databasePath = "./src/carsharing/db/";
-    private static String databaseFileName = "carsharing";
-    static String DB_URL;
-
-    //  Database credentials
-    static final String USER = "sa";
-    static final String PASS = "";
 
     public static void main(String[] args) {
-        if (args.length > 1 && "-databaseFileName".equals(args[0])) {
-            databaseFileName = args[1];
+        DatabaseMenu databaseMenu = new DatabaseMenu();
+//        H2CompanyDao h2CompanyDao = new H2CompanyDao();
+//        h2CompanyDao.createTable();
+        while (!databaseMenu.isExit()) {
+            databaseMenu.logMenuShow();
         }
-        DB_URL = "jdbc:h2:" + databasePath + databaseFileName;
-
-        Connection conn = null;
-        Statement stmt = null;
-        try {
-            // STEP 1: Register JDBC driver
-            Class.forName(JDBC_DRIVER);
-
-            //STEP 2: Open a connection
-            conn = DriverManager.getConnection(DB_URL);
-//            conn = DriverManager.getConnection(DB_URL, USER, PASS);
-            System.out.println(conn);
-            conn.setAutoCommit(true);
-
-            //STEP 3: Execute a query
-            stmt = conn.createStatement();
-            final String dir = System.getProperty("user.dir");
-            System.out.println("current dir = " + dir);
-            /*String sql = "CREATE TABLE   COMPANY " +
-                    "(ID INTEGER, " +
-                    " NAME VARCHAR)";
-            stmt.executeUpdate(sql);*/
-
-            // STEP 4: Clean-up environment
-            stmt.close();
-            conn.close();
-        } catch (SQLException se) {
-            //Handle errors for JDBC
-            se.printStackTrace();
-        } catch (Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        } finally {
-            //finally block used to close resources
-            try {
-                if (stmt != null) stmt.close();
-            } catch (SQLException se2) {
-            } // nothing we can do
-            try {
-                if (conn != null) conn.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
-            } //end finally try
-        } //end try
 
     }
 }
