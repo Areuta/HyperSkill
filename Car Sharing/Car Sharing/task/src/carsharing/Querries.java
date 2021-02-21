@@ -9,4 +9,10 @@ public class Querries {
     public static final String strAlterTableNameUn = "ALTER TABLE COMPANY ADD UNIQUE (NAME);";
     public static final String strSelectAll = "SELECT * FROM COMPANY;";
     public static final String strShow = "SHOW TABLES;";
+    public static final String creatCars = "CREATE TABLE IF NOT EXISTS car (" +
+            "car_id INT AUTO_INCREMENT PRIMARY KEY," +
+            "name VARCHAR UNIQUE NOT NULL," +
+            "company_id INT NOT NULL," +
+            "CONSTRAINT fk_company_id FOREIGN KEY (company_id)" +
+            "REFERENCE company(id) );";
 }

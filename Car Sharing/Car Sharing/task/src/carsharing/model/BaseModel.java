@@ -4,7 +4,17 @@ import java.util.Objects;
 
 // Базовый класс модели, имеющий ключ id
 public class BaseModel {
+    public String className = this.getClass().getSimpleName();
     protected long id;
+    protected String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public BaseModel() {
     }
@@ -14,10 +24,6 @@ public class BaseModel {
     }
 
     public void setId(long id) {
-        this.id = id;
-    }
-
-    public BaseModel(long id) {
         this.id = id;
     }
 
@@ -33,5 +39,6 @@ public class BaseModel {
     public int hashCode() {
         return Objects.hash(id);
     }
+
 }
 

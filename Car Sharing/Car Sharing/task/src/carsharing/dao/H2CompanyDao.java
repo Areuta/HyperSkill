@@ -3,45 +3,42 @@ package carsharing.dao;
 import carsharing.model.BaseModel;
 import carsharing.model.Company;
 
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
-public class H2CompanyDao implements CompanyDao {
-    private static final String CREATE
-            = "CREATE TABLE IF NOT EXISTS company (" +
-            "id INT AUTO_INCREMENT PRIMARY KEY," +
-            "name VARCHAR UNIQUE NOT NULL);";
-    private static final String SELECT
-            = "SELECT id, name FROM company ORDER BY id";
-    private static final String SELECT_ONE
-            = "SELECT id, name FROM company WHERE id=?";
-    private static final String INSERT
-            = "INSERT INTO company (name) VALUES (?)";
-    private static final String UPDATE
-            = "UPDATE company SET name=? WHERE id=?";
-    private static final String DELETE
-            = "DELETE FROM company WHERE id=?";
+public class H2CompanyDao extends H2ModelDao {
 
-
-    @Override
-    public void createTable() {
-        try (Connection connection = H2DaoFactory.createConnection();
-             Statement statement = connection.createStatement()) {
-            statement.executeUpdate(CREATE);
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
+    public H2CompanyDao() {
+        CREATE = "CREATE TABLE IF NOT EXISTS company (" +
+                "id INT AUTO_INCREMENT PRIMARY KEY," +
+                "name VARCHAR UNIQUE NOT NULL);";
     }
 
     @Override
-    public Long insertCompany(BaseModel model) {
+    public void updateModel(BaseModel model) {
+        UPDATE = "UPDATE company SET name=? WHERE id=?";
+        Company company = (Company)model;
+        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(UPDATE);
+        ) {
+            pst.setString(1, company.getName());
+            pst.setLong(2, company.getId());
+            pst.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Long insertToTable(BaseModel model) {
+        if (selectAll().isEmpty()) {
+            resetAuto_Increment("company");
+        }
+        INSERT = "INSERT INTO company (name) VALUES (?)";
         Company company = (Company) model;
         Long id = -1L;
-        try (Connection connection = H2DaoFactory.createConnection();
-             PreparedStatement pst = connection.prepareStatement(INSERT, new String[]{"id"})) {
+        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(INSERT, new String[]{"id"})) {
             pst.setString(1, company.getName());
             pst.executeUpdate();
             ResultSet gk = pst.getGeneratedKeys();
@@ -50,35 +47,28 @@ public class H2CompanyDao implements CompanyDao {
             }
             gk.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("You cannot add a company with this name: " + company.getName());
         }
         return id;
     }
 
     @Override
-    public boolean deleteCompany(BaseModel model) {
-        return false;
+    public List selectAll() {
+        SELECT_ALL = "SELECT * FROM company";
+        return super.selectAll();
     }
 
-    @Override
-    public Company findCompany(BaseModel model) {
-        return null;
-    }
 
     @Override
-    public boolean updateCompany(BaseModel model) {
-        return false;
-    }
-
-    @Override
-    public Collection selectCompanysTO() {
-        Collection<Company> company = new ArrayList<>();
-
-        try (Connection connection = H2DaoFactory.createConnection();
-             PreparedStatement pst = connection.prepareStatement(SELECT);
-             ResultSet resultSet = pst.executeQuery()) {
-            while (resultSet.next()) {
-                company.add(fillContact(resultSet));
+    public Company findInTable(Long id) {
+        SELECT_ONE = "SELECT * FROM company WHERE id=?";
+        Company company = null;
+        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(SELECT_ONE);
+        ) {
+            pst.setLong(1, id);
+            ResultSet resultSet = pst.executeQuery();
+            if (resultSet.next()) {
+                company = fillModel(resultSet);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,7 +76,8 @@ public class H2CompanyDao implements CompanyDao {
         return company;
     }
 
-    private Company fillContact(ResultSet rs) throws SQLException {
+    @Override
+    public Company fillModel(ResultSet rs) throws SQLException {
         Company company = new Company();
         company.setId(rs.getLong("id"));
         company.setName(rs.getString("name"));
