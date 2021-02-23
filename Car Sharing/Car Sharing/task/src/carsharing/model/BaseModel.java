@@ -8,15 +8,15 @@ public class BaseModel {
     protected long id;
     protected String name;
 
+    public BaseModel() {
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public BaseModel() {
     }
 
     public long getId() {
@@ -38,6 +38,11 @@ public class BaseModel {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return getId() + ". " + getName();
     }
 
 }

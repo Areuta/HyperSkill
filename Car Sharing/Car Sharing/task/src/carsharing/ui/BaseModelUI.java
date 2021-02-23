@@ -1,21 +1,28 @@
 package carsharing.ui;
 
-import carsharing.model.BaseModel;
+import carsharing.dao.H2CarDao;
+import carsharing.dao.H2CompanyDao;
+import carsharing.dao.H2CustomerDao;
+import carsharing.model.Car;
+import carsharing.model.Company;
+import carsharing.model.Customer;
 
 import java.util.Scanner;
 
 public class BaseModelUI implements ModelUI {
     public static final Scanner scanner = new Scanner(System.in);
     public boolean isExit = false;
-    private BaseModel selected = null;
+    static Car carSelected = null;
+    static Company companySelected = null;
+    static Customer customerSelected = null;
+    static boolean isCustomer;
+    static boolean haveCustomers = false;
+    static boolean haveCompanies = false;
+    static boolean haveCars = false;
 
-    public BaseModel getSelected() {
-        return selected;
-    }
-
-    public void setSelected(BaseModel selected) {
-        this.selected = selected;
-    }
+    static H2CustomerDao h2CustomerDao;
+    static H2CarDao h2CarDao;
+    static H2CompanyDao h2CompanyDao;
 
     @Override
     public void modelMenuShow(String nameModel) {

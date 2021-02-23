@@ -10,7 +10,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class H2CarDao extends H2ModelDao {
-    private String SELECT_WHERE = "SELECT * FROM car WHERE company_id=?";
 
     public H2CarDao() {
         CREATE = "CREATE TABLE IF NOT EXISTS car (" +
@@ -27,7 +26,7 @@ public class H2CarDao extends H2ModelDao {
     public void updateModel(BaseModel model) {
         UPDATE = "UPDATE car SET name=?, company_id=? WHERE id=?";
         Car car = (Car)model;
-        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(UPDATE);
+        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(UPDATE)
         ) {
             pst.setString(1, car.getName());
             pst.setLong(2, car.getCompany_id());
@@ -81,5 +80,11 @@ public class H2CarDao extends H2ModelDao {
         car.setName(rs.getString("name"));
         car.setCompany_id(rs.getLong("company_id"));
         return car;
+    }
+
+    @Override
+    public Car findInTable(Long id) {
+        SELECT_ONE = "SELECT * FROM company WHERE id=?";
+        return (Car) super.findInTable(id);
     }
 }

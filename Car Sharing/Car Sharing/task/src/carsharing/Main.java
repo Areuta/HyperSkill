@@ -1,10 +1,10 @@
 package carsharing;
 
-import carsharing.ui.StartMenu;
+import carsharing.ui.CarsharingUI;
 
 public class Main {
 
     public static void main(String[] args) {
-        new StartMenu();
+        new CarsharingUI();
     }
 }

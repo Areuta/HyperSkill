@@ -8,9 +8,4 @@ public class Company extends BaseModel {
     public Company() {
     }
 
-    @Override
-    public String toString() {
-        return getId() + ". " + getName();
-    }
-
 }

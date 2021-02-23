@@ -1,23 +1,35 @@
 package carsharing.ui;
 
-import carsharing.dao.H2CarDao;
 import carsharing.dao.H2DaoUtils;
 import carsharing.model.Car;
 import carsharing.model.Company;
+import carsharing.model.Customer;
 
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 public class CarUI extends BaseModelUI {
-    private H2CarDao h2CarDao;
+    private List<Car> carList;
 
     public CarUI(Company company) {
-        h2CarDao = H2DaoUtils.getCarDao();
-        setSelected(company);
+        isExit = false;
         while (!isExit) {
             modelMenuShow("Car");
             modelMenuProcess();
+        }
+    }
+
+    public CarUI(Company company, boolean isCustomer) {
+        h2CarDao = H2DaoUtils.getCarDao();
+        companySelected = company;
+        if (isCustomer) {
+            modelsListMenuShow();
+            if (haveCars) {
+                modelsListMenuProcess();
+            }
+        } else {
+            new CarUI(company);
         }
     }
 
@@ -31,6 +43,9 @@ public class CarUI extends BaseModelUI {
             }
             case 1: {
                 modelsListMenuShow();
+                if (isCustomer && haveCars) {
+                    modelsListMenuProcess();
+                }
                 break;
             }
             case 2: {
@@ -47,28 +62,51 @@ public class CarUI extends BaseModelUI {
     }
 
     @Override
-    public void addModel() {
-        System.out.println("\nEnter the car name:");
-        scanner.nextLine();
-        Car car = new Car(scanner.nextLine(), getSelected().getId());
-        if (h2CarDao.insertToTable(car) != -1) {
-            System.out.println("The car was added!");
+    public void modelsListMenuShow() {
+        carList = h2CarDao.selectCarsOfCompany(companySelected);
+        haveCars = !carList.isEmpty();
+        if (!haveCars) {
+            System.out.println("The car list is empty!");
+        } else {
+            if (!isCustomer) {
+                System.out.println("\nCar list:");
+            }
+            Collections.sort(carList, Comparator.comparingLong(Car::getId));
+            for (int i = 0; i < carList.size(); i++) {
+                System.out.println((i + 1) + ". " + carList.get(i).getName());
+            }
+            if (isCustomer) {
+                System.out.println("0. Back");
+            }
         }
     }
 
     @Override
-    public void modelsListMenuShow() {
-        System.out.println();
-        List<Car> list = h2CarDao.selectCarsOfCompany((Company) getSelected());
-        if (list.isEmpty()) {
-            System.out.println("The car list is empty!");
+    public void modelsListMenuProcess() {
+        int l = scanner.nextInt();
+        if (l == 0) {
+            return;
+        }
+        if (l > 0 && l <= carList.size()) {
+            carSelected = carList.get(l - 1);
+            customerSelected.setRented_car_id(carSelected.getId());
+            h2CustomerDao.updateModel(customerSelected);
+            System.out.println("You rented '" + carSelected.getName() + "'");
         } else {
-            System.out.println("Car list:");
-            Collections.sort(list, Comparator.comparingLong(Car::getId));
-            for (int i = 0; i < list.size(); i++) {
-                System.out.println((i + 1) + ". " + list.get(i).getName());
-            }
+            System.out.println("There is no such car!");
+        }
+    }
 
+    @Override
+    public void addModel() {
+        System.out.println("\nEnter the car name:");
+        scanner.nextLine();
+        Car car = new Car(scanner.nextLine(), companySelected.getId());
+        if (h2CarDao.insertToTable(car) != -1) {
+            System.out.println("The car was added!");
         }
     }
 }
+
+
+

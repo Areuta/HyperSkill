@@ -62,18 +62,7 @@ public class H2CompanyDao extends H2ModelDao {
     @Override
     public Company findInTable(Long id) {
         SELECT_ONE = "SELECT * FROM company WHERE id=?";
-        Company company = null;
-        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(SELECT_ONE);
-        ) {
-            pst.setLong(1, id);
-            ResultSet resultSet = pst.executeQuery();
-            if (resultSet.next()) {
-                company = fillModel(resultSet);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return company;
+        return (Company) super.findInTable(id);
     }
 
     @Override

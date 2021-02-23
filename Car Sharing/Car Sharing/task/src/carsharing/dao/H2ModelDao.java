@@ -1,7 +1,6 @@
 package carsharing.dao;
 
 import carsharing.model.BaseModel;
-import carsharing.model.Company;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -9,16 +8,20 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static carsharing.dao.H2DaoUtils.*;
+import static carsharing.dao.H2DaoUtils.executeUpdate;
 
 public class H2ModelDao implements ModelDao {
-    protected static String CREATE;
-    protected static String SELECT_ALL;
-    protected static String SELECT;
-    protected static String SELECT_ONE;
-    protected static String INSERT;
-    protected static String UPDATE;
-    protected static String DELETE;
+     static String CREATE;
+     static String SELECT_ALL;
+     static String SELECT_ONE;
+     static String SELECT_WHERE;
+     static String INSERT;
+     static String UPDATE;
+     static String DELETE;
+     static String RENTEDQUERY = "SELECT car.name, company.name FROM customer, company, car" +
+            " WHERE car.company_id = company.id" +
+            " AND customer.rented_car_id = car.id" +
+            " AND customer.id = ?";
 
 
     @Override
@@ -38,8 +41,19 @@ public class H2ModelDao implements ModelDao {
     }
 
     @Override
-    public Company findInTable(Long id) {
-        return null;
+    public BaseModel findInTable(Long id) {
+        BaseModel baseModel = null;
+        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(SELECT_ONE);
+        ) {
+            pst.setLong(1, id);
+            ResultSet resultSet = pst.executeQuery();
+            if (resultSet.next()) {
+                baseModel = fillModel(resultSet);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return baseModel;
     }
 
     @Override
@@ -47,12 +61,12 @@ public class H2ModelDao implements ModelDao {
     }
 
     @Override
-    public List selectAll() {
+    public List<BaseModel> selectAll() {
         return selectWhere(SELECT_ALL);
     }
 
     @Override
-    public List selectWhere(String where) {
+    public List<BaseModel> selectWhere(String where) {
         List<BaseModel> models = new ArrayList<>();
         try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(where);
              ResultSet resultSet = pst.executeQuery()) {

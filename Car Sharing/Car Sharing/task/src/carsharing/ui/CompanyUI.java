@@ -1,21 +1,28 @@
 package carsharing.ui;
 
-import carsharing.dao.H2CompanyDao;
 import carsharing.dao.H2DaoUtils;
 import carsharing.model.Company;
 
 import java.util.List;
 
-
 public class CompanyUI extends BaseModelUI {
-    private H2CompanyDao h2CompanyDao;
-
-    private static boolean haveCompanies;
     public CompanyUI() {
-        h2CompanyDao = H2DaoUtils.getCompanyDao();
         while (!isExit) {
             modelMenuShow("Company");
             modelMenuProcess();
+        }
+    }
+
+    public CompanyUI(boolean isCustomer) {
+        h2CompanyDao = H2DaoUtils.getCompanyDao();
+        if (isCustomer) {
+            modelsListMenuShow();
+            if (haveCompanies) {
+                modelsListMenuProcess();
+            }
+        }
+        else {
+            new CompanyUI();
         }
     }
 
@@ -49,16 +56,6 @@ public class CompanyUI extends BaseModelUI {
     }
 
     @Override
-    public void addModel() {
-        System.out.println("\nEnter the company name:");
-        scanner.nextLine();
-        Company company = new Company(scanner.nextLine());
-        if (h2CompanyDao.insertToTable(company) != -1) {
-            System.out.println("The company was created!");
-        }
-    }
-
-    @Override
     public void modelsListMenuShow() {
         System.out.println();
         List<Company> list = h2CompanyDao.selectAll();
@@ -80,10 +77,20 @@ public class CompanyUI extends BaseModelUI {
         }
         Company company = h2CompanyDao.findInTable(l);
         if (company != null) {
-            System.out.println("\n'" + company.getName() + "' company");
-            new CarUI(company);
+            System.out.println(isCustomer ? "\nChoose a car:" : "\n'" + company.getName() + "' company");
+            new CarUI(company, isCustomer);
         } else {
             System.out.println("There is no such company!");
+        }
+    }
+
+    @Override
+    public void addModel() {
+        System.out.println("\nEnter the company name:");
+        scanner.nextLine();
+        Company company = new Company(scanner.nextLine());
+        if (h2CompanyDao.insertToTable(company) != -1) {
+            System.out.println("The company was created!");
         }
     }
 }
