@@ -3,7 +3,9 @@ package carsharing.ui;
 import carsharing.dao.H2DaoUtils;
 import carsharing.model.Customer;
 
+import java.util.InputMismatchException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CustomerUI extends BaseModelUI {
 
@@ -11,20 +13,26 @@ public class CustomerUI extends BaseModelUI {
         h2CustomerDao = H2DaoUtils.getH2CustomerDao();
         modelsListMenuShow();
         if (haveCustomers) {
-            modelsListMenuProcess();
+            try {
+                modelsListMenuProcess();
+            } catch (InputMismatchException e) {
+                System.out.println(badInput);
+                scanner.nextLine();
+            }
         }
     }
 
     @Override
     public void modelsListMenuShow() {
         System.out.println();
-        List<Customer> list = h2CustomerDao.selectAll();
+        List<Customer> list =
+                h2CustomerDao.selectAll().stream().map(model -> (Customer) model).collect(Collectors.toList());
         haveCustomers = !list.isEmpty();
         if (!haveCustomers) {
             System.out.println("The customer list is empty!");
         } else {
             System.out.println("The customer list:");
-            list.stream().forEach(System.out::println);
+            list.forEach(System.out::println);
             System.out.println("0. Back");
         }
     }
@@ -41,7 +49,12 @@ public class CustomerUI extends BaseModelUI {
             isExit = false;
             while (!isExit) {
                 rentMenuShow();
-                rentMenuProcess();
+                try {
+                    rentMenuProcess();
+                } catch (InputMismatchException inputMismatchException) {
+                    System.out.println(badInput);
+                    scanner.nextLine();
+                }
             }
         } else {
             System.out.println("There is no such customer!");
@@ -56,8 +69,9 @@ public class CustomerUI extends BaseModelUI {
     }
 
     private void rentMenuProcess() {
-        String rentedCar = h2CustomerDao.getRentedCar(customerSelected.getId());
-        String rentedCompany = h2CustomerDao.getRentedCompany(customerSelected.getId());
+        String rentedCar = h2CustomerDao.getRentedData(customerSelected.getId(), 1);
+        String rentedCompany = h2CustomerDao.getRentedData(customerSelected.getId(), 2);
+
         int i = scanner.nextInt();
         switch (i) {
             case 0: {
@@ -67,7 +81,7 @@ public class CustomerUI extends BaseModelUI {
             case 1: {
                 if (rentedCar == null) {
                     new CompanyUI(true);
-                }else {
+                } else {
                     System.out.println("\nYou've already rented a car!");
                 }
                 break;
@@ -75,7 +89,7 @@ public class CustomerUI extends BaseModelUI {
             case 2: {
                 if (rentedCar == null) {
                     System.out.println("You didn't rent a car!");
-                }else {
+                } else {
                     customerSelected.setRented_car_id(null);
                     h2CustomerDao.updateModel(customerSelected);
                     System.out.println("\nYou've returned a rented car!");
@@ -85,7 +99,7 @@ public class CustomerUI extends BaseModelUI {
             case 3: {
                 if (rentedCar == null) {
                     System.out.println("You didn't rent a car!");
-                }else {
+                } else {
                     System.out.println("\nYour rented car:");
                     System.out.println(rentedCar);
                     System.out.println("Company:");
@@ -94,7 +108,7 @@ public class CustomerUI extends BaseModelUI {
                 break;
             }
             default:
-                System.out.println("Unexpected value: " + i);
+                System.out.println(badInput + i);
         }
     }
 

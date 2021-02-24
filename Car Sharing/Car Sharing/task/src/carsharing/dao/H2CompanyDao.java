@@ -14,13 +14,14 @@ public class H2CompanyDao extends H2ModelDao {
         CREATE = "CREATE TABLE IF NOT EXISTS company (" +
                 "id INT AUTO_INCREMENT PRIMARY KEY," +
                 "name VARCHAR UNIQUE NOT NULL);";
+        SELECT_ALL = "SELECT * FROM company";
     }
 
     @Override
     public void updateModel(BaseModel model) {
         UPDATE = "UPDATE company SET name=? WHERE id=?";
-        Company company = (Company)model;
-        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(UPDATE);
+        Company company = (Company) model;
+        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(UPDATE)
         ) {
             pst.setString(1, company.getName());
             pst.setLong(2, company.getId());
@@ -32,12 +33,11 @@ public class H2CompanyDao extends H2ModelDao {
 
     @Override
     public Long insertToTable(BaseModel model) {
-        if (selectAll().isEmpty()) {
-            resetAuto_Increment("company");
-        }
+        resetAuto_Increment("company");
         INSERT = "INSERT INTO company (name) VALUES (?)";
         Company company = (Company) model;
-        Long id = -1L;
+        long id = -1L;
+
         try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(INSERT, new String[]{"id"})) {
             pst.setString(1, company.getName());
             pst.executeUpdate();
@@ -51,13 +51,6 @@ public class H2CompanyDao extends H2ModelDao {
         }
         return id;
     }
-
-    @Override
-    public List selectAll() {
-        SELECT_ALL = "SELECT * FROM company";
-        return super.selectAll();
-    }
-
 
     @Override
     public Company findInTable(Long id) {

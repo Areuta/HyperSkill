@@ -11,14 +11,14 @@ import java.util.List;
 import static carsharing.dao.H2DaoUtils.executeUpdate;
 
 public class H2ModelDao implements ModelDao {
-     static String CREATE;
-     static String SELECT_ALL;
-     static String SELECT_ONE;
-     static String SELECT_WHERE;
-     static String INSERT;
-     static String UPDATE;
-     static String DELETE;
-     static String RENTEDQUERY = "SELECT car.name, company.name FROM customer, company, car" +
+    String CREATE;
+    String SELECT_ALL;
+    String SELECT_ONE;
+    String SELECT_WHERE;
+    String INSERT;
+    String UPDATE;
+    String DELETE;
+    String RENTEDQUERY = "SELECT car.name, company.name FROM customer, company, car" +
             " WHERE car.company_id = company.id" +
             " AND customer.rented_car_id = car.id" +
             " AND customer.id = ?";
@@ -43,7 +43,7 @@ public class H2ModelDao implements ModelDao {
     @Override
     public BaseModel findInTable(Long id) {
         BaseModel baseModel = null;
-        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(SELECT_ONE);
+        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(SELECT_ONE)
         ) {
             pst.setLong(1, id);
             ResultSet resultSet = pst.executeQuery();
@@ -83,11 +83,13 @@ public class H2ModelDao implements ModelDao {
     public BaseModel fillModel(ResultSet rs) throws SQLException {
         return null;
     }
-
-    public void resetAuto_Increment(String nameTable) {
-        executeUpdate("ALTER TABLE " +
-                nameTable +
-                " ALTER COLUMN id RESTART WITH 1");
+    // метод обнуляет автоинкрементный счётчик, если таблица пуста
+    void resetAuto_Increment(String nameTable) {
+        if (selectAll().isEmpty()) {
+            executeUpdate("ALTER TABLE " +
+                    nameTable +
+                    " ALTER COLUMN id RESTART WITH 1");
+        }
     }
 
 

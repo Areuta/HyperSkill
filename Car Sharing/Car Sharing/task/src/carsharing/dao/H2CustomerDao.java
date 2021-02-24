@@ -7,7 +7,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.List;
 
 public class H2CustomerDao extends H2ModelDao {
     public H2CustomerDao() {
@@ -18,46 +17,31 @@ public class H2CustomerDao extends H2ModelDao {
                 "CONSTRAINT fk_rented_car_id FOREIGN KEY (rented_car_id)" +
                 "REFERENCES car(id)" +
                 ")";
+        SELECT_ALL = "SELECT * FROM customer";
     }
 
-    public String getRentedCompany(Long id) {
+    // метод позволяет вернуть марку машины (indexName = 1) и компанию (indexName = 2)
+    public String getRentedData(Long id, int indexName) {
         try (PreparedStatement ps = H2DaoUtils.getConnection().prepareStatement(RENTEDQUERY)) {
             ps.setLong(1, id);
             ResultSet resultSet = ps.executeQuery();
             if (resultSet.next()) {
-                return resultSet.getString(2);
+                return resultSet.getString(indexName);
             }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+        } catch (SQLException throwable) {
+            throwable.printStackTrace();
         }
         return null;
     }
 
-    public String getRentedCar(Long id) {
-        try (PreparedStatement ps = H2DaoUtils.getConnection().prepareStatement(RENTEDQUERY)) {
-//            ps.setString(1, "car.name, company.name");
-            ps.setLong(1, id);
-            ResultSet resultSet = ps.executeQuery();
-//            System.out.println("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs");
-//            System.out.println(resultSet.getMetaData().getColumnCount());
-//            System.out.println("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSs");
-            if (resultSet.next()) {
-                return resultSet.getString(1);
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-        return null;
-    }
 
     @Override
     public Long insertToTable(BaseModel model) {
-        if (selectAll().isEmpty()) {
-            resetAuto_Increment("customer");
-        }
+        resetAuto_Increment("customer");
         INSERT = "INSERT INTO customer (name) VALUES (?)";
         Customer customer = (Customer) model;
-        Long id = -1L;
+        long id = -1L;
+
         try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(INSERT, new String[]{"id"})) {
             pst.setString(1, customer.getName());
             pst.executeUpdate();
@@ -73,17 +57,18 @@ public class H2CustomerDao extends H2ModelDao {
     }
 
     @Override
-    public List selectAll() {
-        SELECT_ALL = "SELECT * FROM customer";
-        return super.selectAll();
-    }
-
-    @Override
-    public Customer fillModel(ResultSet rs) throws SQLException {
-        Customer customer = new Customer();
-        customer.setId(rs.getLong("id"));
-        customer.setName(rs.getString("name"));
-        return customer;
+    public void updateModel(BaseModel model) {
+        UPDATE = "UPDATE customer SET rented_car_id=? WHERE id=?";
+        Customer customer = (Customer) model;
+        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(UPDATE)
+        ) {
+            Long carId = customer.getRented_car_id();
+            pst.setObject(1, carId, Types.INTEGER);
+            pst.setLong(2, customer.getId());
+            pst.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -93,17 +78,10 @@ public class H2CustomerDao extends H2ModelDao {
     }
 
     @Override
-    public void updateModel(BaseModel model) {
-        UPDATE = "UPDATE customer SET rented_car_id=? WHERE id=?";
-        Customer customer = (Customer) model;
-        try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(UPDATE);
-        ) {
-            Long carId = customer.getRented_car_id();
-            pst.setObject(1, carId, Types.INTEGER);
-            pst.setLong(2, customer.getId());
-            pst.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public Customer fillModel(ResultSet rs) throws SQLException {
+        Customer customer = new Customer();
+        customer.setId(rs.getLong("id"));
+        customer.setName(rs.getString("name"));
+        return customer;
     }
 }

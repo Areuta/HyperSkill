@@ -1,6 +1,7 @@
 package carsharing.dao;
 
 import java.sql.*;
+import java.util.Objects;
 
 public class H2DaoUtils {
 
@@ -11,7 +12,7 @@ public class H2DaoUtils {
     private static H2CustomerDao h2CustomerDao = null;
     static final String JDBC_DRIVER = "org.h2.Driver";
     private static final String databasePath = "./src/carsharing/db/";
-    private static String databaseFileName = "carsharing";
+    private static final String databaseFileName = "carsharing";
     static String DB_URL = "jdbc:h2:./src/carsharing/db/carsharing";
 
     // database connection
@@ -23,17 +24,15 @@ public class H2DaoUtils {
             Class.forName(JDBC_DRIVER);
             connection = DriverManager.getConnection(DB_URL);
             connection.setAutoCommit(true);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
         }
         return connection;
     }
 
     public static ResultSet executeQuery(String query) {
-        try {
-            return getConnection().createStatement().executeQuery(query);
+        try (ResultSet resultSet = getConnection().createStatement().executeQuery(query)){
+            return resultSet;
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
@@ -49,26 +48,14 @@ public class H2DaoUtils {
     }
 
     public static H2CompanyDao getCompanyDao() {
-        if (h2CompanyDao != null){
-            return h2CompanyDao;
-        }else {
-            return new H2CompanyDao();
-        }
+        return Objects.requireNonNullElseGet(h2CompanyDao, H2CompanyDao::new);
     }
 
     public static H2CarDao getCarDao() {
-        if (h2CarDao != null){
-            return h2CarDao;
-        }else {
-            return new H2CarDao();
-        }
+        return Objects.requireNonNullElseGet(h2CarDao, H2CarDao::new);
     }
 
     public static H2CustomerDao getH2CustomerDao() {
-        if(h2CustomerDao != null) {
-            return h2CustomerDao;
-        }else {
-            return new H2CustomerDao();
-        }
+        return Objects.requireNonNullElseGet(h2CustomerDao, H2CustomerDao::new);
     }
 }

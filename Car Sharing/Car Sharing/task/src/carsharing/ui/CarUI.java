@@ -3,20 +3,24 @@ package carsharing.ui;
 import carsharing.dao.H2DaoUtils;
 import carsharing.model.Car;
 import carsharing.model.Company;
-import carsharing.model.Customer;
 
-import java.util.Collections;
 import java.util.Comparator;
+import java.util.InputMismatchException;
 import java.util.List;
 
 public class CarUI extends BaseModelUI {
     private List<Car> carList;
 
-    public CarUI(Company company) {
+    public CarUI() {
         isExit = false;
         while (!isExit) {
             modelMenuShow("Car");
-            modelMenuProcess();
+            try {
+                modelMenuProcess();
+            } catch (InputMismatchException e) {
+                System.out.println(badInput);
+                scanner.nextLine();
+            }
         }
     }
 
@@ -26,10 +30,15 @@ public class CarUI extends BaseModelUI {
         if (isCustomer) {
             modelsListMenuShow();
             if (haveCars) {
-                modelsListMenuProcess();
+                try {
+                    modelsListMenuProcess();
+                } catch (InputMismatchException e) {
+                    System.out.println(badInput);
+                    scanner.nextLine();
+                }
             }
         } else {
-            new CarUI(company);
+            new CarUI();
         }
     }
 
@@ -44,7 +53,12 @@ public class CarUI extends BaseModelUI {
             case 1: {
                 modelsListMenuShow();
                 if (isCustomer && haveCars) {
-                    modelsListMenuProcess();
+                    try {
+                        modelsListMenuProcess();
+                    } catch (InputMismatchException e) {
+                        System.out.println(badInput);
+                        scanner.nextLine();
+                    }
                 }
                 break;
             }
@@ -57,7 +71,7 @@ public class CarUI extends BaseModelUI {
                 break;
             }
             default:
-                System.out.println("Unexpected value: " + i);
+                System.out.println(badInput + i);
         }
     }
 
@@ -71,7 +85,7 @@ public class CarUI extends BaseModelUI {
             if (!isCustomer) {
                 System.out.println("\nCar list:");
             }
-            Collections.sort(carList, Comparator.comparingLong(Car::getId));
+            carList.sort(Comparator.comparingLong(Car::getId));
             for (int i = 0; i < carList.size(); i++) {
                 System.out.println((i + 1) + ". " + carList.get(i).getName());
             }

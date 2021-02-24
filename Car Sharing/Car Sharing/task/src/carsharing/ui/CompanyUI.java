@@ -3,13 +3,20 @@ package carsharing.ui;
 import carsharing.dao.H2DaoUtils;
 import carsharing.model.Company;
 
+import java.util.InputMismatchException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CompanyUI extends BaseModelUI {
     public CompanyUI() {
         while (!isExit) {
             modelMenuShow("Company");
-            modelMenuProcess();
+            try {
+                modelMenuProcess();
+            } catch (InputMismatchException e) {
+                System.out.println(badInput);
+                scanner.nextLine();
+            }
         }
     }
 
@@ -18,7 +25,12 @@ public class CompanyUI extends BaseModelUI {
         if (isCustomer) {
             modelsListMenuShow();
             if (haveCompanies) {
-                modelsListMenuProcess();
+                try {
+                    modelsListMenuProcess();
+                } catch (InputMismatchException e) {
+                    System.out.println(badInput);
+                    scanner.nextLine();
+                }
             }
         }
         else {
@@ -37,7 +49,12 @@ public class CompanyUI extends BaseModelUI {
             case 1: {
                 modelsListMenuShow();
                 if (haveCompanies) {
-                    modelsListMenuProcess();
+                    try {
+                        modelsListMenuProcess();
+                    } catch (InputMismatchException e) {
+                        System.out.println(badInput);
+                        scanner.nextLine();
+                    }
                 }
                 break;
             }
@@ -51,20 +68,21 @@ public class CompanyUI extends BaseModelUI {
                 break;
             }
             default:
-                System.out.println("Unexpected value: " + i);
+                System.out.println(badInput + i);
         }
     }
 
     @Override
     public void modelsListMenuShow() {
         System.out.println();
-        List<Company> list = h2CompanyDao.selectAll();
+        List<Company> list =
+                h2CompanyDao.selectAll().stream().map(model -> (Company)model).collect(Collectors.toList());
         haveCompanies = !list.isEmpty();
         if (!haveCompanies) {
             System.out.println("The company list is empty!");
         } else {
             System.out.println("Choose a company:");
-            list.stream().forEach(System.out::println);
+            list.forEach(System.out::println);
             System.out.println("0. Back");
         }
     }
@@ -75,6 +93,7 @@ public class CompanyUI extends BaseModelUI {
         if (l == 0) {
             return;
         }
+
         Company company = h2CompanyDao.findInTable(l);
         if (company != null) {
             System.out.println(isCustomer ? "\nChoose a car:" : "\n'" + company.getName() + "' company");

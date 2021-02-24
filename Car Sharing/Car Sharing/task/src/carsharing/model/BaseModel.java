@@ -2,9 +2,8 @@ package carsharing.model;
 
 import java.util.Objects;
 
-// Базовый класс модели, имеющий ключ id
+// Базовый класс модели, имеющий ключ id и имя name
 public class BaseModel {
-    public String className = this.getClass().getSimpleName();
     protected long id;
     protected String name;
 

@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class H2CarDao extends H2ModelDao {
 
@@ -20,12 +21,13 @@ public class H2CarDao extends H2ModelDao {
                 "REFERENCES company(id));";
 
         SELECT_ONE = "SELECT * FROM car WHERE id=?";
+        SELECT_ALL = "SELECT * FROM car;";
     }
 
     @Override
     public void updateModel(BaseModel model) {
         UPDATE = "UPDATE car SET name=?, company_id=? WHERE id=?";
-        Car car = (Car)model;
+        Car car = (Car) model;
         try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(UPDATE)
         ) {
             pst.setString(1, car.getName());
@@ -39,13 +41,11 @@ public class H2CarDao extends H2ModelDao {
 
     @Override
     public Long insertToTable(BaseModel model) {
-        if (selectAll().isEmpty()) {
-            resetAuto_Increment("car");
-        }
-
+        resetAuto_Increment("car");
         INSERT = "INSERT INTO car (name, company_id) VALUES (?, ?)";
         Car car = (Car) model;
-        Long id = -1L;
+        long id = -1L;
+
         try (PreparedStatement pst = H2DaoUtils.getConnection().prepareStatement(INSERT, new String[]{"id"})) {
             pst.setString(1, car.getName());
             pst.setLong(2, car.getCompany_id());
@@ -62,15 +62,16 @@ public class H2CarDao extends H2ModelDao {
         return id;
     }
 
-    @Override
-    public List selectAll() {
-        SELECT_ALL = "SELECT * FROM car;";
-        return super.selectAll();
+    // метод создаёт список из всех машин данной компании company
+    public List<Car> selectCarsOfCompany(Company company) {
+        SELECT_WHERE = "SELECT * FROM car WHERE company_id=" + company.getId();
+        return (selectWhere(SELECT_WHERE).stream().map(model -> (Car) model).collect(Collectors.toList()));
     }
 
-    public List selectCarsOfCompany(Company company) {
-        SELECT_WHERE = "SELECT * FROM car WHERE company_id=" + company.getId();
-        return selectWhere(SELECT_WHERE);
+    @Override
+    public Car findInTable(Long id) {
+        SELECT_ONE = "SELECT * FROM company WHERE id=?";
+        return (Car) super.findInTable(id);
     }
 
     @Override
@@ -80,11 +81,5 @@ public class H2CarDao extends H2ModelDao {
         car.setName(rs.getString("name"));
         car.setCompany_id(rs.getLong("company_id"));
         return car;
-    }
-
-    @Override
-    public Car findInTable(Long id) {
-        SELECT_ONE = "SELECT * FROM company WHERE id=?";
-        return (Car) super.findInTable(id);
     }
 }

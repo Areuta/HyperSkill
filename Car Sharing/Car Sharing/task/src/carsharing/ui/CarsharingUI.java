@@ -1,24 +1,30 @@
 package carsharing.ui;
 
-import carsharing.dao.H2CustomerDao;
 import carsharing.dao.H2DaoUtils;
 import carsharing.model.Customer;
 
-import java.util.List;
+import java.util.InputMismatchException;
 
 public class CarsharingUI extends BaseModelUI {
-    private H2CustomerDao h2CustomerDao;
 
     public CarsharingUI() {
+        // создаём таблицы или проверяем их наличие
         H2DaoUtils.getCompanyDao().createTable();
         H2DaoUtils.getCarDao().createTable();
         H2DaoUtils.getH2CustomerDao().createTable();
+
         h2CustomerDao = H2DaoUtils.getH2CustomerDao();
 
         while (!isExit) {
             modelMenuShow("Customer");
-            modelMenuProcess();
+            try {
+                modelMenuProcess();
+            } catch (InputMismatchException e) {
+                System.out.println(badInput);
+                scanner.nextLine();
+            }
         }
+        scanner.close();
     }
 
     @Override
@@ -39,7 +45,7 @@ public class CarsharingUI extends BaseModelUI {
             }
             case 1: {
                 isCustomer = false;
-                new CompanyUI(isCustomer);
+                new CompanyUI(false);
                 break;
             }
             case 2: {
@@ -52,40 +58,10 @@ public class CarsharingUI extends BaseModelUI {
                 break;
             }
             default:
-                System.out.println("Unexpected value: " + i);
+                System.out.println(badInput + i);
         }
     }
 
-    @Override
-    public void modelsListMenuShow() {
-        System.out.println();
-        List<Customer> list = h2CustomerDao.selectAll();
-        if (list.isEmpty()) {
-            System.out.println("The customer list is empty!");
-        } else {
-            System.out.println("Customer list:");
-            list.stream().forEach(System.out::println);
-            System.out.println("0. Back");
-        }
-    }
-
-    @Override
-    public void modelsListMenuProcess() {
-        long l = scanner.nextLong();
-        if (l == 0) {
-            return;
-        }
-
-        Customer customer = h2CustomerDao.findInTable(l);
-        if (customer != null) {
-            //todo add CustomerUI here
-//              new CustomerUI2();
-//            rentMenuShow();
-//            rentMenuProcess();
-        } else {
-            System.out.println("There is no such customer!");
-        }
-    }
 
     @Override
     public void addModel() {
