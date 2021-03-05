@@ -31,7 +31,7 @@ public class AccountUtils {
             } else {
                 k = c;
             }
-            sum +=k;
+            sum += k;
         }
         return sum % 10 == 0 ? 0 : 10 - sum % 10;
     }
@@ -44,9 +44,7 @@ public class AccountUtils {
     }
 
     public static boolean checkValidCard(String cN) {
-        return cN.length() == 15 &&
-                cN.startsWith(BIN) &&
-                cN.matches("\\d") &&
+        return cN.matches("[\\d]{16}") &&
                 generateChecksum(cN.substring(0, 15)) == Integer.valueOf(cN.substring(15));
     }
 

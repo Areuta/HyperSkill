@@ -3,28 +3,31 @@ package banking.dao;
 import banking.model.Account;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public interface AccountDaoInt {
     void createTable(); // создание таблицы
 
-    Long insertToTable( Account account);// вставка в таблицу новой строки
+    Long insertToTable(Account account);// вставка в таблицу новой строки
 
     void clearTable(String nameTable); // очистить таблицу
 
-     Account findInTable(Long id); // найти в таблице строку по id
+    void deleteAccount(Long id); // удаление карты
 
-     Account findInTable(String cardNumber); // найти в таблице строку по cardNumber
+    Account findInTable(Long id); // найти в таблице строку по id
 
-    void updateaccount( Account account); // найти строку по id и заполнить значениями взятыми из модели
+    Account findInTable(String cardNumber); // найти в таблице строку по cardNumber
 
-    List< Account> selectAll();  // получить все строки из таблицы
+    void updateAccount(Account account); // найти строку по id и заполнить значениями взятыми из модели
 
-    List< Account> selectWhere(String where); // получить все строки удовлетворяющие условию в строке where
+    List<Account> selectAll();  // получить все строки из таблицы
 
-     Account fillaccount(ResultSet rs); // заполнить модель данными полученными из resultset
+    List<Account> selectWhere(String where); // получить все строки удовлетворяющие условию в строке where
+
+    Account fillAccount(ResultSet rs) throws SQLException; // заполнить модель данными полученными из resultset
 
 
-
+    void updateTranfer(Account accountSelected, Account account, long transfer);
 }
 

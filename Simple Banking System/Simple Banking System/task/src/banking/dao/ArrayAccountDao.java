@@ -45,7 +45,7 @@ public class ArrayAccountDao extends ModelDao {
     public Account findInTable(String cardNumber) {
         for (int i = 0; i < accs.length; i++) {
             if (cardNumber.equals(accs[0][i])) {
-                return new Account(this, cardNumber, accs[1][i], Long.parseLong(accs[2][i]));
+                return new Account(cardNumber, accs[1][i], Long.parseLong(accs[2][i]));
             }
         }
         return null;

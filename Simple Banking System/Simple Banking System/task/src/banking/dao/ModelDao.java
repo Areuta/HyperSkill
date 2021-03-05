@@ -3,12 +3,12 @@ package banking.dao;
 import banking.model.Account;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 public class ModelDao implements AccountDaoInt {
     @Override
     public void createTable() {
-
     }
 
     @Override
@@ -18,7 +18,10 @@ public class ModelDao implements AccountDaoInt {
 
     @Override
     public void clearTable(String nameTable) {
+    }
 
+    @Override
+    public void deleteAccount(Long id) {
     }
 
     @Override
@@ -32,8 +35,7 @@ public class ModelDao implements AccountDaoInt {
     }
 
     @Override
-    public void updateaccount(Account account) {
-
+    public void updateAccount(Account account) {
     }
 
     @Override
@@ -47,7 +49,13 @@ public class ModelDao implements AccountDaoInt {
     }
 
     @Override
-    public Account fillaccount(ResultSet rs) {
+    public Account fillAccount(ResultSet rs) throws SQLException {
         return null;
     }
+
+    @Override
+    public void updateTranfer(Account accountSelected, Account account, long transfer) {
+    }
+
+
 }

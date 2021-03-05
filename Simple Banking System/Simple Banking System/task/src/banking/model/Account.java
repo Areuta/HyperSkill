@@ -1,12 +1,21 @@
 package banking.model;
 
-import banking.dao.AccountDaoInt;
-
 public class Account {
+    private long id;
     private String cardNumber;
     private String pin;
     private long balance;
-    private AccountDaoInt accountDao;
+
+    public Account() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
 
     public String getCardNumber() {
         return cardNumber;
@@ -32,34 +41,23 @@ public class Account {
         this.balance = balance;
     }
 
-    public AccountDaoInt getAccountDao() {
-        return accountDao;
-    }
 
-    public void setAccountDao(AccountDaoInt accountDao) {
-        this.accountDao = accountDao;
-    }
-
-    public Account(AccountDaoInt accountDao, String cardNumber) {
-        this.accountDao = accountDao;
-
+    public Account(String cardNumber) {
         this.cardNumber = cardNumber;
-
         this.pin = AccountUtils.pinGenerator();
-
         this.balance = 0;
     }
 
-    public Account(AccountDaoInt accountDao, String cardNumber, String pin, long balance) {
+    public Account(String cardNumber, String pin, long balance) {
         this.cardNumber = cardNumber;
         this.pin = pin;
         this.balance = balance;
-        this.accountDao = accountDao;
     }
 
 
     @Override
     public String toString() {
-        return super.toString();
+        return String.format("%n%d. %s %s %d",
+                getId(), getCardNumber(), getPin(), getBalance());
     }
 }

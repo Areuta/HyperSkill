@@ -1,15 +1,18 @@
 package banking.ui;
 
-import banking.dao.DaoUtils;
 import banking.model.Account;
 import banking.model.AccountUtils;
 
 import java.util.InputMismatchException;
 
+import static banking.dao.DaoUtils.closeConnection;
+import static banking.dao.DaoUtils.setAccountDao;
+
 public class LoginUI extends BaseUI {
 
-    public LoginUI(String array) {
-        accountDao = DaoUtils.getAccountDao(array);
+    public LoginUI(String storage) {
+        accountDao = setAccountDao(storage);
+        accountDao.createTable();
         isFinalExit = false;
         while (!isFinalExit) {
             logMenuShow();
@@ -20,12 +23,14 @@ public class LoginUI extends BaseUI {
                 scanner.nextLine();
             }
         }
+        closeConnection();
     }
 
     // показывает основное меню программы
     void logMenuShow() {
         System.out.println("\n1. Create an account\n" +
                 "2. Log into account\n" +
+                "3. Accounts list\n" +
                 "0. Exit");
     }
 
@@ -40,6 +45,10 @@ public class LoginUI extends BaseUI {
             }
             case 2: {
                 logAccount();
+                break;
+            }
+            case 3: {
+                accountDao.selectAll().forEach(System.out::println);
                 break;
             }
             case 0: {
@@ -62,7 +71,7 @@ public class LoginUI extends BaseUI {
         }
         while (accountDao.findInTable(newCard) != null);
 
-        Account newAccount = new Account(accountDao, newCard);
+        Account newAccount = new Account(newCard);
         accountDao.insertToTable(newAccount);
         System.out.println("\nYour card has been created\n"
                 + "Your card number:\n"
