@@ -1,7 +1,15 @@
 package search;
 
 public class Main {
+
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+     new SearchUI();
     }
+
 }
+//    Dwight Joseph djo@gmail.com
+//    Rene Webb webb@gmail.com
+//    Katie Jacobs
+//    Erick Harrington harrington@gmail.com
+//    Myrtle Medina
+//    Erick Burgess
