@@ -3,13 +3,13 @@ package search;
 public class Main {
 
     public static void main(String[] args) {
-     new SearchUI();
+        if (args.length >= 2 && args[0].equals("--data")) {
+//            SearchStage searchStage = new SearchStage("", args[1]);
+//            BaseSearch searchMethod = new ContentSearch(searchStage);
+            SearchStage searchStage = new MappedSearchStage("", args[1]);
+            BaseSearch searchMethod = new CoincidenceSearch(searchStage);
+                SearchUI searchUI = new SearchUI(searchMethod);
+        }
     }
 
 }
-//    Dwight Joseph djo@gmail.com
-//    Rene Webb webb@gmail.com
-//    Katie Jacobs
-//    Erick Harrington harrington@gmail.com
-//    Myrtle Medina
-//    Erick Burgess
