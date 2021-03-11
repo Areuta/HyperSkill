@@ -1,4 +1,6 @@
-package search;
+package search.strategy;
+
+import search.stage.SearchStage;
 
 import java.util.ArrayList;
 import java.util.stream.Collectors;
@@ -14,7 +16,7 @@ public class ContentSearch extends BaseSearch {
         ArrayList<String> res =
                 (ArrayList<String>) searchStage.getTextStrings()
                         .stream()
-                        .filter(s -> s.toLowerCase().indexOf(searchStage.getToSearch().toLowerCase()) >= 0)
+                        .filter(s -> s.toLowerCase().indexOf(searchStage.getToSearch()[0].toLowerCase()) >= 0)
                         .collect(Collectors.toList());
         searchStage.setResStrings(res);
     }

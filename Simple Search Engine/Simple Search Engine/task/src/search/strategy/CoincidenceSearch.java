@@ -1,4 +1,7 @@
-package search;
+package search.strategy;
+
+import search.stage.MappedSearchStage;
+import search.stage.SearchStage;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -13,7 +16,7 @@ public class CoincidenceSearch extends BaseSearch {
     public void search(SearchStage stage) {
         MappedSearchStage searchStage = (MappedSearchStage) stage;
         ArrayList<String> res = new ArrayList<>();
-        String lowString = stage.getToSearch().toLowerCase();
+        String lowString = stage.getToSearch()[0].toLowerCase();
         Set<Integer> set;
         if (searchStage.getInvertedIndexesMap().containsKey(lowString)) {
             set = searchStage.getInvertedIndexesMap().get(lowString);

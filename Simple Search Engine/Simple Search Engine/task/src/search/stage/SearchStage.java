@@ -1,4 +1,4 @@
-package search;
+package search.stage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,11 +7,11 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class SearchStage {
-    protected String toSearch;
+    protected String[] toSearch;
     protected ArrayList<String> textStrings;
     protected ArrayList<String> resStrings;
 
-    public SearchStage(String toSearch, String fileName) {
+    public SearchStage(String[] toSearch, String fileName) {
         this.toSearch = toSearch;
         this.textStrings = getStringsFromFile(fileName);
     }
@@ -28,11 +28,11 @@ public class SearchStage {
         return textStrings;
     }
 
-    public String getToSearch() {
+    public String[] getToSearch() {
         return toSearch;
     }
 
-    public void setToSearch(String toSearch) {
+    public void setToSearch(String[] toSearch) {
         this.toSearch = toSearch;
     }
 

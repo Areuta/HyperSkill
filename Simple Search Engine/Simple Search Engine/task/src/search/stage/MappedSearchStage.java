@@ -1,4 +1,4 @@
-package search;
+package search.stage;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,7 +12,7 @@ public class MappedSearchStage extends SearchStage {
         return invertedIndexesMap;
     }
 
-    public MappedSearchStage(String toSearch, String fileName) {
+    public MappedSearchStage(String[] toSearch, String fileName) {
         super(toSearch, fileName);
         invertedIndexesMap = new HashMap<>();
 

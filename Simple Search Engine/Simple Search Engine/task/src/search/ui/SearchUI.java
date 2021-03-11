@@ -1,11 +1,13 @@
-package search;
+package search.ui;
+
+import search.strategy.BaseSearch;
 
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class SearchUI {
     static final Scanner scanner = new Scanner(System.in);
-    private static final String badInput = "Incorrect option! Try again.";
+    static final String badInput = "Incorrect option! Try again.";
     private boolean isExit;
 
     private BaseSearch baseSearch;
@@ -42,7 +44,7 @@ public class SearchUI {
         int choice = scanner.nextInt();
         switch (choice) {
             case 1: {
-                searchingBooks();
+                new ExtSearchMenu(baseSearch);
                 break;
             }
             case 2: {
@@ -64,15 +66,5 @@ public class SearchUI {
         baseSearch.getStage().getTextStrings().forEach(System.out::println);
     }
 
-    private void searchingBooks() {
-        System.out.println("\nEnter data to search books:");
-        scanner.nextLine();
-        SearchStage stage = baseSearch.getStage();
-        stage.setToSearch(scanner.nextLine());
-        baseSearch.setStage(stage);
-        baseSearch.search(stage);
-        baseSearch.printResult();
-
-    }
 
 }

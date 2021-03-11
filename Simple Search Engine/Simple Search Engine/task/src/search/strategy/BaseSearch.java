@@ -1,4 +1,6 @@
-package search;
+package search.strategy;
+
+import search.stage.SearchStage;
 
 public class BaseSearch implements SearchMethod {
     private SearchStage stage;
