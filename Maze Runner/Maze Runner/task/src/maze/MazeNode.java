@@ -3,30 +3,8 @@ package maze;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MazeNode {
-
-    private int row;
-    private int column;
-    private String displayString;
+public class MazeNode extends Gridable{
     private Map<MazeNode, MazeEdge> neighbours;
-    private Maze maze;
-    public static final String PASS = "  ";
-    public static final String WALL = "\u2588\u2588";
-
-
-    /**
-     * @return the displayChar
-     */
-    public String getDisplayString() {
-        return displayString;
-    }
-
-    /**
-     * @param displayString the displayChar to set
-     */
-    public void setDisplayString(String displayString) {
-        this.displayString = displayString;
-    }
 
     public MazeNode(int row, int column, String displayString, Maze maze) {
         this.row = row;
@@ -35,15 +13,19 @@ public class MazeNode {
         this.maze = maze;
     }
 
-    public void addNeighbours() {
-        this.neighbours = fillNeighbours();
-    }
-
     public Map<MazeNode, MazeEdge> getNeighbours() {
         return neighbours;
     }
 
-    private Map<MazeNode, MazeEdge> fillNeighbours() {
+    public void setNeighbours(Map<MazeNode, MazeEdge> neighbours) {
+        this.neighbours = neighbours;
+    }
+
+    public void addNeighbours() {
+        this.neighbours = defineNeighbours();
+    }
+
+    private Map<MazeNode, MazeEdge> defineNeighbours() {
         Map<MazeNode, MazeEdge> neighbours = new HashMap<>();
         if (row > 1) {
             neighbours.put((MazeNode) maze.getCells()[row - 2][column]
@@ -63,20 +45,6 @@ public class MazeNode {
         }
 
         return neighbours;
-    }
-
-    /**
-     * @return the row
-     */
-    public int getRow() {
-        return row;
-    }
-
-    /**
-     * @return the column
-     */
-    public int getColumn() {
-        return column;
     }
 
 
