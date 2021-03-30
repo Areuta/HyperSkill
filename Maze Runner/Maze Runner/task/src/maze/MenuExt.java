@@ -11,6 +11,7 @@ public class MenuExt extends Menu {
                 "2. Load a maze\n" +
                 "3. Save the maze\n" +
                 "4. Display the maze\n" +
+                "5. Find the escape.\n" +
                 "0. Exit");
     }
 
@@ -20,25 +21,27 @@ public class MenuExt extends Menu {
         switch (choice) {
             case 1: {
                 generateNewMaze();
-                maze.printMaze();
+                System.out.println("\n" + maze);
                 break;
             }
             case 2: {
-                if (loadMazeFromFile()) {
-                    maze.printMaze();
+                if (loadFromFile()) {
+//                    System.out.println("\n" + maze);
                 }
+
                 break;
             }
             case 3: {
-                saveMazeToFile();
+                DaoMaze.saveMazeToFile("test_maze.txt", maze);
+//                saveMazeToFile();
                 break;
             }
             case 4: {
-                maze.printMaze();
+                System.out.println("\n" + maze);
                 break;
             }
             case 5: {
-                maze.findEscape();
+                System.out.println("\n" + maze.toString(maze.findEscape()));
                 break;
             }
             case 0: {

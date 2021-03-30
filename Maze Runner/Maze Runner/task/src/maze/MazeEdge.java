@@ -1,6 +1,8 @@
 package maze;
 
-public class MazeEdge extends Gridable{
+import java.io.Serializable;
+
+public class MazeEdge extends Gridable implements Serializable {
     private MazeNode node1;
     private MazeNode node2;
     private int weight;

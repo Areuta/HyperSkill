@@ -29,17 +29,12 @@ public abstract class Menu {
 
     abstract void menuShow();
 
-    boolean loadMazeFromFile() {
+    boolean loadFromFile() {
         System.out.println("\nEnter a path to the file: ");
         scanner.nextLine();
-        File file = new File(scanner.nextLine());
         try {
-            maze = DaoMaze.loadMaze(file);
-            System.out.println();
-        } catch (IOException e) {
-            System.out.printf("Can't read from file: %s%n", file.getAbsolutePath());
-            return false;
-        } catch (DaoMaze.SavedMazeException e) {
+            maze = DaoMaze.loadMazeFromFile(scanner.nextLine());
+        }  catch (DaoMaze.SavedMazeException e) {
             System.out.println("Cannot load the maze. It has an invalid format.");
             return false;
         }
@@ -53,7 +48,6 @@ public abstract class Menu {
             this.maze = new RandomMaze(n - 2, n - 2);
         } catch (InputMismatchException e) {
             System.out.println(badInput);
-
         }
     }
 }

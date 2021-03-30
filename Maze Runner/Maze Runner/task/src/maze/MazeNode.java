@@ -1,9 +1,10 @@
 package maze;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MazeNode extends Gridable{
+public class MazeNode extends Gridable implements Serializable {
     private Map<MazeNode, MazeEdge> neighbours;
 
     public MazeNode(int row, int column, String displayString, Maze maze) {

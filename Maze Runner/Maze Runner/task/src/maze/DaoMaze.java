@@ -1,8 +1,6 @@
 package maze;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -12,6 +10,14 @@ import static maze.Gridable.WALL;
 
 public class DaoMaze {
     private static Maze maze;
+
+    public static Maze getMaze() {
+        return maze;
+    }
+
+    public static void setMaze(Maze maze) {
+        DaoMaze.maze = maze;
+    }
 
     public static Maze loadMaze(File file) throws IOException, SavedMazeException {
         List<String> lines = Files.readAllLines(Path.of(file.getAbsolutePath()));
@@ -28,7 +34,7 @@ public class DaoMaze {
         try {
             for (int i = 0; i < maze.height; i++) {
                 for (int j = 0; j < maze.width; j++) {
-                    String defString = lines.get(i + 1).charAt((j+ 1) * 2) == '\u2588' ? WALL : PASS;
+                    String defString = lines.get(i + 1).charAt((j + 1) * 2) == '\u2588' ? WALL : PASS;
                     MazeNode node = new MazeNode(i, j, defString, maze);
                     maze.cells[i][j] = node;
                     maze.mazeNodes.add(node);
@@ -181,5 +187,47 @@ public class DaoMaze {
         }
     }
 
+
+    static void saveMazeToFile(String path, Maze maze) {
+        DaoMaze.setMaze(maze);
+        try {
+            FileOutputStream f = new FileOutputStream(new File(path));
+            ObjectOutputStream o = new ObjectOutputStream(f);
+
+            o.writeObject(maze);
+
+            o.close();
+            f.close();
+
+            System.out.println("Maze saved to file!");
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        } catch (IOException e) {
+            System.out.println("Error initializing stream");
+        }
+    }
+
+    static Maze loadMazeFromFile(String path) throws SavedMazeException{
+        File file = new File(path);
+        try {
+            FileInputStream f = new FileInputStream(file);
+            ObjectInputStream o = new ObjectInputStream(f);
+
+            DaoMaze.maze = (Maze) o.readObject();
+
+            o.close();
+            f.close();
+
+            System.out.println("Maze loaded from file!");
+        } catch (FileNotFoundException e) {
+            System.out.printf("Can't read from file: %s%n", file.getAbsolutePath());
+        } catch (IOException e) {
+            System.out.println("Error initializing stream");
+            throw new SavedMazeException();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return maze;
+    }
 
 }

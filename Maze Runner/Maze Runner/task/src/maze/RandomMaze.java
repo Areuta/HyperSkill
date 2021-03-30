@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import static maze.Gridable.PASS;
 import static maze.Gridable.WALL;
 
-public class RandomMaze extends Maze{
+public class RandomMaze extends Maze {
 
     public RandomMaze(int height, int width) {
         super(height, width);
@@ -16,6 +16,8 @@ public class RandomMaze extends Maze{
         generateInlets();
         getSpanningTree();
     }
+
+
 
     private void generateMazeNodes() {
         for (int i = 0; i < height; i += 2) {
@@ -74,15 +76,23 @@ public class RandomMaze extends Maze{
             int position = (int) (Math.random() * height / 2) * 2;
             start = (MazeNode) cells[position][0];
             position = (int) (Math.random() * height / 2) * 2;
-            goal = (MazeNode) cells[position][width - 1];
+            if (width % 2 == 0) {
+                goal = (MazeNode) cells[position][width - 2];
+            } else {
+                goal = (MazeNode) cells[position][width - 1];
+            }
         }
+
         if (upToDown) {
             int position = (int) (Math.random() * width / 2) * 2;
             start = (MazeNode) cells[0][position];
             position = (int) (Math.random() * width / 2) * 2;
-            goal = (MazeNode) cells[height - 1][position];
+            if (height % 2 == 0) {
+                goal = (MazeNode) cells[height - 2][position];
+            } else {
+                goal = (MazeNode) cells[height - 1][position];
+            }
         }
-
     }
 
     public void getSpanningTree() {

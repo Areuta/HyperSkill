@@ -15,14 +15,16 @@ public class SimpleMenu extends Menu{
         switch (choice) {
             case 1: {
                 generateNewMaze();
-                maze.printMaze();
+                System.out.println("\n" + maze);
                 new MenuExt().initialize();
                 break;
             }
             case 2: {
-                if (loadMazeFromFile()){
-                    maze.printMaze();
+                if (loadFromFile()) {
+//                    System.out.println("\n" + maze);
+                    new MenuExt().initialize();
                 }
+
                 break;
             }
             case 0: {

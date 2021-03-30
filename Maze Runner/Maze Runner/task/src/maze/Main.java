@@ -3,9 +3,6 @@ package maze;
 public class Main {
     public static void main(String[] args) {
         new SimpleMenu().initialize();
-//        ./Maze Runner/task/src/maze/mazes/maze1616885256.txt   LEFT
-        //  ./Maze Runner/task/src/maze/mazes/maze1616886195.txt  UP
-        //  ./Maze Runner/task/src/maze/mazes/maze1616888689.txt
     }
 
     /**
