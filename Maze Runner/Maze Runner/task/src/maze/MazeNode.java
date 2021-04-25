@@ -18,15 +18,7 @@ public class MazeNode extends Gridable implements Serializable {
         return neighbours;
     }
 
-    public void setNeighbours(Map<MazeNode, MazeEdge> neighbours) {
-        this.neighbours = neighbours;
-    }
-
     public void addNeighbours() {
-        this.neighbours = defineNeighbours();
-    }
-
-    private Map<MazeNode, MazeEdge> defineNeighbours() {
         Map<MazeNode, MazeEdge> neighbours = new HashMap<>();
         if (row > 1) {
             neighbours.put((MazeNode) maze.getCells()[row - 2][column]
@@ -45,8 +37,7 @@ public class MazeNode extends Gridable implements Serializable {
                     , (MazeEdge) maze.getCells()[row][column + 1]);
         }
 
-        return neighbours;
+        this.neighbours = neighbours;
     }
-
 
 }

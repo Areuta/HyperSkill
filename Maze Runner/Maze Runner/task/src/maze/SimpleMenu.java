@@ -9,7 +9,6 @@ public class SimpleMenu extends Menu{
                 "0. Exit");
     }
 
-
     void menuProcess() {
         int choice = scanner.nextInt();
         switch (choice) {

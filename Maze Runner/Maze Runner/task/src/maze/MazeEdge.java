@@ -3,9 +3,9 @@ package maze;
 import java.io.Serializable;
 
 public class MazeEdge extends Gridable implements Serializable {
-    private MazeNode node1;
-    private MazeNode node2;
-    private int weight;
+    private final MazeNode node1;
+    private final MazeNode node2;
+    private final int weight;
 
     public int getWeight() {
         return weight;
@@ -15,7 +15,6 @@ public class MazeEdge extends Gridable implements Serializable {
         this.node1 = node1;
         this.node2 = node2;
         this.weight = weight;
-        this.maze = maze;
         this.displayString = MazeNode.WALL;
     }
 

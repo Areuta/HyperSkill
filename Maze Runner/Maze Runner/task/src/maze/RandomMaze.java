@@ -95,6 +95,7 @@ public class RandomMaze extends Maze {
         }
     }
 
+    // using Prim algorithm
     public void getSpanningTree() {
         Set<MazeEdge> spanTree = new HashSet<>();
         Set<MazeEdge> exploreEdges = new HashSet<>();

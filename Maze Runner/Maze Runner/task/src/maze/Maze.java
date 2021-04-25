@@ -2,7 +2,6 @@ package maze;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static maze.Gridable.*;
 
@@ -13,8 +12,8 @@ public class Maze implements Serializable {
     int height;
     MazeNode start;
     MazeNode goal;
-    HashSet<MazeEdge> mazeEdges;
-    HashSet<MazeNode> mazeNodes;
+    transient HashSet<MazeEdge> mazeEdges;
+    transient HashSet<MazeNode> mazeNodes;
     boolean leftToRight;
 
     public Maze(int height, int width) {
@@ -42,152 +41,21 @@ public class Maze implements Serializable {
     }
 
 
-    public void getSpanningTree() {
-        Set<MazeEdge> spanTree = new HashSet<>();
-        Set<MazeEdge> exploreEdges = new HashSet<>();
-        Set<MazeNode> visited = new HashSet<>();
-        Set<MazeNode> mazeNods = new HashSet<>(mazeNodes);
-        MazeNode current = start;
-
-        while (!mazeNods.isEmpty()) {
-            mazeNods.remove(current);
-
-            // add neighbours current node
-            current.getNeighbours().values().forEach(mazeEdge -> {
-                if (!spanTree.contains(mazeEdge)) exploreEdges.add(mazeEdge);
-            });
-
-            //remove the edges leading to the loops
-            exploreEdges.forEach(mazeEdge -> {
-                if (mazeNods.contains(mazeEdge.getNode1())
-                        && mazeNods.contains(mazeEdge.getNode2())) {
-                    exploreEdges.remove(mazeEdge);
-                }
-            });
-
-            // find the edges with the minimum weight
-            int min = exploreEdges.stream()
-                    .mapToInt(MazeEdge::getWeight)
-                    .min().getAsInt();
-            List<MazeEdge> minEdges = exploreEdges.stream()
-                    .filter(mazeEdge -> mazeEdge.getWeight() == min)
-                    .collect(Collectors.toList());
-
-            // select the edge leading to the new vertex
-            MazeEdge minEdge = minEdges.stream()
-                    .filter(edge -> !spanTree.contains(edge))
-                    .findAny().get();
-
-            visited.add(current);
-            current = visited.contains(minEdge.getNode1()) ? minEdge.getNode2() : minEdge.getNode1();
-            current.setDisplayString(PASS);
-
-            minEdge.setDisplayString(PASS);
-
-            spanTree.add(minEdge);
-            exploreEdges.remove(minEdge);
-
-        }
-
-    }
-
-    public String toString(LinkedList<Gridable> path) {
-        StringBuilder sb = new StringBuilder();
-
-        // first line
-        for (int c = 0; c < width + 2; c++) {
-            if (!leftToRight && start.getColumn() == c - 1) {
-                sb.append(path == null ? PASS : PATH);
-            } else {
-                sb.append(WALL);
-            }
-        }
-        sb.append("\n");
-
-        // ordinary lines
-        int l = height % 2 == 0 ? height - 1 : height;
-        for (int r = 0; r < l; r++) {
-
-            // first element of the line
-            if (leftToRight && start.getRow() == r) {
-                sb.append(path != null ? PATH : PASS);
-            } else {
-                sb.append(WALL);
-            }
-
-            // ordinary elements
-            int k = width % 2 == 0 ? width - 1 : width;
-            for (int c = 0; c < k; c++) {
-                if (path != null && path.contains(cells[r][c])) {
-                    sb.append(PATH);
-                } else {
-                    sb.append(cells[r][c].getDisplayString());
-                }
-            }
-
-            // last element of the line
-            if (leftToRight && goal.getRow() == r) {
-                sb.append(path == null ? PASS : PATH);
-                if (k == width - 1) {
-                    sb.append(path == null ? PASS : WALL);
-                }
-
-            } else {
-                if (k == width - 1) {
-                    sb.append(cells[r][k - 1].getDisplayString());
-                }
-                sb.append(WALL);
-            }
-            sb.append("\n");
-        }
-
-        // penultimate line if height % 2 == 0
-        if (height % 2 == 0) {
-            sb.append(WALL);
-            for (int c = 0; c < width; c++) {
-                if (!leftToRight && goal.getColumn() == c) {
-                    sb.append(path == null ? PASS : PATH);
-                } else {
-                    sb.append(cells[height - 2][c].getDisplayString());
-                }
-            }
-            sb.append(WALL).append("\n");
-        }
-
-        // last line
-        for (int c = 0; c < width + 2; c++) {
-            if (!leftToRight && goal.getColumn() == c - 1) {
-                sb.append(path == null ? PASS : PATH);
-            } else {
-                sb.append(WALL);
-            }
-        }
-
-        return sb.toString();
-    }
-
-    public void printMaze() {
-//        System.out.println(this.toString());
-        System.out.println(this.toString(findEscape()));
-    }
-
-    public LinkedList<Gridable> findEscape() {
+    public List<Gridable> findEscape() {
         Set<Gridable> visited = new HashSet<>();
         HashMap<Gridable, Gridable> parentMap = new HashMap<>();
         Queue<MazeNode> toExplore = new ArrayDeque<>();
-
-        boolean found = false;
+        LinkedList<Gridable> path = new LinkedList<>();
         toExplore.add(start);
         visited.add(start);
 
         while (!toExplore.isEmpty()) {
             MazeNode current = toExplore.poll();
             if (current == goal) {
-                found = true;
                 break;
             }
 
-            // add neighbours current node
+            // add neighbours of the current node
             current.getNeighbours().forEach((node, mazeEdge) -> {
                 if (!visited.contains(node)
                         && !visited.contains(mazeEdge)
@@ -202,13 +70,7 @@ public class Maze implements Serializable {
             });
         }
 
-        if (!found) {
-            System.out.println("No path exists");
-            return null;
-        }
-
         // reconstruct the path
-        LinkedList<Gridable> path = new LinkedList<>();
         MazeNode currNode = goal;
         MazeEdge currEdge;
         while (currNode != start) {
@@ -220,6 +82,64 @@ public class Maze implements Serializable {
         path.addFirst(start);
         return path;
 
+    }
+
+    public String showPath(List<Gridable> path) {
+        if (path.isEmpty()) return this.toString();
+
+        StringBuilder sb = new StringBuilder();
+        // first line
+        for (int c = 0; c < width + 2; c++) {
+            sb.append(!leftToRight && start.getColumn() == c - 1 ? PATH : WALL);
+        }
+        sb.append("\n");
+
+        // ordinary lines
+        int l = height % 2 == 0 ? height - 1 : height;
+        for (int r = 0; r < l; r++) {
+
+            // first element of the line
+            sb.append(leftToRight && start.getRow() == r ? PATH : WALL);
+
+            // ordinary elements
+            int k = width % 2 == 0 ? width - 1 : width;
+            for (int c = 0; c < k; c++) {
+                sb.append(path.contains(cells[r][c]) ? PATH : cells[r][c].getDisplayString());
+            }
+
+            // last element of the line
+            if (leftToRight && goal.getRow() == r) {
+                sb.append(PATH);
+                // if the width is even
+                if (k == width - 1) {
+                    sb.append(PATH);
+                }
+            } else {
+                if (k == width - 1) {
+                    sb.append(cells[r][k - 1].getDisplayString());
+                }
+                sb.append(WALL);
+            }
+            sb.append("\n");
+        }
+
+        // penultimate line if the height is even
+        if (height % 2 == 0) {
+            sb.append(WALL);
+            for (int c = 0; c < width; c++) {
+                sb.append(!leftToRight && goal.getColumn() == c
+                        ? PATH : cells[height - 2][c].getDisplayString());
+            }
+            sb.append(WALL).append("\n");
+        }
+
+        // last line
+        for (int c = 0; c < width + 2; c++) {
+            sb.append(!leftToRight && goal.getColumn() == c
+                    ? PATH : WALL);
+        }
+
+        return sb.toString();
     }
 
     @Override

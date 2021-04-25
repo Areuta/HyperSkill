@@ -4,7 +4,7 @@ public class Main {
     public static void main(String[] args) {
         new SimpleMenu().initialize();
     }
-
+    // test_maze.txt
     /**
      * B - BORDER
      * N - NODE always PASS
@@ -20,6 +20,5 @@ public class Main {
      * 3 | B N E N E B
      * 4 | B E W E W B
      * 5 | B B B B B B
-
      */
 }

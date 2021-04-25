@@ -1,7 +1,5 @@
 package maze;
 
-import java.io.File;
-
 public class MenuExt extends Menu {
 
     @Override
@@ -28,12 +26,10 @@ public class MenuExt extends Menu {
                 if (loadFromFile()) {
 //                    System.out.println("\n" + maze);
                 }
-
                 break;
             }
             case 3: {
                 DaoMaze.saveMazeToFile("test_maze.txt", maze);
-//                saveMazeToFile();
                 break;
             }
             case 4: {
@@ -41,26 +37,17 @@ public class MenuExt extends Menu {
                 break;
             }
             case 5: {
-                System.out.println("\n" + maze.toString(maze.findEscape()));
+                System.out.println("\n" + maze.showPath(maze.findEscape()));
                 break;
             }
             case 0: {
                 System.exit(0);
                 break;
             }
-        }
-
-    }
-
-    private void saveMazeToFile() {
-//        long time = System.currentTimeMillis() / 1000;
-        File file = new File("test_maze.txt");
-//        File file = new File("maze" + time + ".txt");
-//        File file = new File("./Maze Runner/task/src/maze/mazes/maze" + time + ".txt");
-        if (DaoMaze.saveMaze(maze, file)) {
-            System.out.printf("%nSuccessfully saved maze in file: %s%n", file.getName());
+            default: {
+                System.out.println(badInput);
+            }
         }
     }
-
 
 }
