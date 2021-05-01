@@ -10,8 +10,8 @@ import advisor.view.PrintStrategy;
 import advisor.view.SimplePrint;
 
 public class CommandManager {
-//    PrintStrategy printStrategy = new SimplePrint();
-    PrintStrategy printStrategy = new FakeStrategy();
+    PrintStrategy printStrategy = new SimplePrint();
+//    PrintStrategy printStrategy = new FakeStrategy();
 
     public void newCommand() {
         BrowseNew browseNew = new BrowseNew();
